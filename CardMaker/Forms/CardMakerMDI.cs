@@ -732,6 +732,7 @@ namespace CardMaker.Forms
             const string ORIENTATION = "orientation";
             const string OUTPUT_FILE = "output_file";
             const string OPEN_ON_EXPORT = "open_on_export";
+            const string GROUP_TO_EXPORT = "group_to_export";
 
             zQuery.AddPullDownBox("Page Orientation", 
                 new string[]
@@ -745,11 +746,34 @@ namespace CardMaker.Forms
             zQuery.AddFileBrowseBox("Output File", m_sPdfExportLastFile, "PDF files (*.pdf)|*.pdf|All files (*.*)|*.*", OUTPUT_FILE);
             zQuery.AddCheckBox("Open PDF on Export", m_bPdfExportLastOpen, OPEN_ON_EXPORT);
 
-            if (DialogResult.OK != zQuery.ShowDialog(this))
+            MDILayoutControl zLayoutForm = null;
+
+						foreach(var child in MdiChildren)
+						{
+							if (child is MDILayoutControl)
+							{
+								zLayoutForm = (MDILayoutControl)child;
+							}
+						}
+
+						ComboBox groupComboBox = null;
+						if (zLayoutForm != null)
+						{
+							string[] comboBoxSource = {""};
+							comboBoxSource = comboBoxSource.Concat(zLayoutForm.GetGroupNames()).ToArray();
+							groupComboBox = zQuery.AddComboBox("Group To Export", comboBoxSource, 0, GROUP_TO_EXPORT);
+						}
+
+						if (DialogResult.OK != zQuery.ShowDialog(this))
             {
                 return;
             }
 
+						string GroupName = "";
+						if (groupComboBox != null && groupComboBox.SelectedItem != null)
+						{
+							GroupName = groupComboBox.SelectedItem.ToString();
+						}
             var nStartLayoutIdx = 0;
             var nEndLayoutIdx = ProjectManager.Instance.LoadedProject.Layout.Length;
             if (!bExportAllLayouts)
@@ -773,7 +797,7 @@ namespace CardMaker.Forms
                 m_sPdfExportLastFile += ".pdf";
             }
 
-            var zFileCardExporter = new PdfSharpExporter(nStartLayoutIdx, nEndLayoutIdx, m_sPdfExportLastFile, zQuery.GetString(ORIENTATION));
+            var zFileCardExporter = new PdfSharpExporter(nStartLayoutIdx, nEndLayoutIdx, m_sPdfExportLastFile, zQuery.GetString(ORIENTATION), GroupName);
 
             var zWait = new WaitDialog(
                 2,

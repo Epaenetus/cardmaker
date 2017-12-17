@@ -75,6 +75,9 @@ namespace CardMaker.XML
         [XmlAttribute]
         public bool drawBorder { get; set; }
 
+        [XmlAttribute]
+        public string GroupName { get; set; }
+
         #endregion
 
         public ProjectLayout()
@@ -89,6 +92,7 @@ namespace CardMaker.XML
             defaultCount = 1;
             dpi = 100;
             drawBorder = true;
+						GroupName = "";
         }
 
         /// <summary>
@@ -102,6 +106,7 @@ namespace CardMaker.XML
             height = zLayout.height;
             defaultCount = zLayout.defaultCount;
             dpi = zLayout.dpi;
+						GroupName = zLayout.GroupName;
             drawBorder = zLayout.drawBorder;
             buffer = zLayout.buffer;
             combineReferences = zLayout.combineReferences;

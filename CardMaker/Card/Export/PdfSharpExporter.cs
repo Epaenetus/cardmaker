@@ -59,7 +59,8 @@ namespace CardMaker.Card.Export
 
         private readonly PageOrientation m_ePageOrientation = PageOrientation.Portrait;
 
-        public PdfSharpExporter(int nLayoutStartIndex, int nLayoutEndIndex, string sExportFile, string sPageOrientation) : base(nLayoutStartIndex, nLayoutEndIndex)
+        private string m_sGroupName = "";
+        public PdfSharpExporter(int nLayoutStartIndex, int nLayoutEndIndex, string sExportFile, string sPageOrientation, string sGroupName) : base(nLayoutStartIndex, nLayoutEndIndex)
         {
             
             m_sExportFile = sExportFile;
@@ -72,6 +73,7 @@ namespace CardMaker.Card.Export
                 Logger.AddLogLine(sPageOrientation + " is an unknow page orientation.");
             }
             m_zDocument = new PdfDocument();
+						m_sGroupName = sGroupName;
             AddPage();
         }
 
@@ -88,6 +90,11 @@ namespace CardMaker.Card.Export
             {
                 ChangeExportLayoutIndex(nIdx);
                 zWait.ProgressReset(1, 0, CurrentDeck.CardCount, 0);
+
+                if (!string.IsNullOrEmpty(m_sGroupName) && CurrentDeck.CardLayout.GroupName != m_sGroupName)
+								{
+									continue;
+								}
 
                 ConfigurePointSizes(CurrentDeck.CardLayout);
 

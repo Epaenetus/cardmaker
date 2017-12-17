@@ -116,6 +116,11 @@ namespace CardMaker.Forms
             UpdateLayoutInfo(args.Layout);
         }
 
+				public string[] GetGroupNames()
+				{
+					return groupNameComboBox.Items.Cast<string>().ToArray();
+				}
+
         #endregion
 
         #region form events
@@ -670,6 +675,11 @@ namespace CardMaker.Forms
             {
                 LayoutManager.Instance.ActiveLayout.combineReferences = checkLoadAllReferences.Checked;
             }
+						else if (sender == groupNameComboBox)
+						{
+                LayoutManager.Instance.ActiveLayout.GroupName = groupNameComboBox.SelectedItem.ToString();
+						}
+
             LayoutManager.Instance.FireLayoutUpdatedEvent(true);
         }
 
@@ -770,7 +780,7 @@ namespace CardMaker.Forms
                 numericCardSetDPI.Value = zLayout.dpi;
                 checkCardSetDrawBorder.Checked = zLayout.drawBorder;
                 checkLoadAllReferences.Checked = zLayout.combineReferences;
-                SetupCardIndices(LayoutManager.Instance.ActiveDeck.CardCount);
+								groupNameComboBox.SelectedIndex = groupNameComboBox.FindStringExact(zLayout.GroupName);
                 groupBoxCardCount.Enabled = true;
                 groupBoxCardSet.Enabled = true;
 
@@ -873,5 +883,6 @@ namespace CardMaker.Forms
                 });
             }
         }
-    }
+
+	}
 }
